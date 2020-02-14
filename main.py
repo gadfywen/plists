@@ -25,7 +25,7 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         token = self.get_argument('token', None)
         if not token:
-            self.write("Hello, proxy")
+            self.write("Service Running")
             return
         else:
             if token != os.getenv('TOKEN'):
