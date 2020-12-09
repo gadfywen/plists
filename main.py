@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import os
+import json
 import time
 import hashlib
 import plistlib
@@ -16,6 +17,9 @@ from tornado.options import define, options
 
 
 define("port", default=int(os.environ.get('PORT', 8200)), help="Run server on a specific port", type=int) 
+
+queue = []
+
 
 def get_bundle_id_from_plist_string(s):
     v = plistlib.readPlistFromString(s)
@@ -61,12 +65,33 @@ class PlistStoreHandler(tornado.web.RequestHandler):
         self.set_header('Content-Type', 'text/xml')
         self.finish(value)
 
+class MsgTransferHandler(tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body)
+        except Exception as e:
+            data = {}
+            print e
+
+        if not data:
+            raise tornado.web.HTTPError(404)
+        else:
+            queue.append(data)
+            self.write(json.dumps(queue))
+
+    def get(self):
+        if len(queue) > 0:
+            self.write(json.dumps(queue.pop(0)))
+        else:
+            raise tornado.web.HTTPError(404)
+
 
 def make_app(debug=True):
     return tornado.web.Application([
         (r"/", MainHandler),
         (r"/plist/?", PlistStoreHandler),
         (r"/plist/(.+)", PlistStoreHandler),
+        (r"/msgtransfer/?", MsgTransferHandler),
     ], debug=debug)
 
 
