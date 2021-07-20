@@ -83,7 +83,7 @@ class MsgTransferHandler(tornado.web.RequestHandler):
         if len(queue) > 0:
             self.write(json.dumps(queue.pop(0)))
         else:
-            raise tornado.web.HTTPError(404)
+            self.write(json.dumps({"text":""}))
 
 
 def make_app(debug=True):
