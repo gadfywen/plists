@@ -42,11 +42,13 @@ class PlistStoreHandler(tornado.web.RequestHandler):
 
     def post(self):
         body = self.request.body
+        print "post get"
         if len(body) > 5000:
             self.set_status(500)
             self.finish("request body too long")
         bundle_id = get_bundle_id_from_plist_string(body)
-
+        
+        print "{}".format(bundle_id)
         m = hashlib.md5()
         m.update(body)
         key = m.hexdigest()[8:16]
