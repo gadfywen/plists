@@ -42,13 +42,13 @@ class PlistStoreHandler(tornado.web.RequestHandler):
 
     def post(self):
         body = self.request.body
-        print "post get"
+        print("post get")
         if len(body) > 5000:
             self.set_status(500)
             self.finish("request body too long")
         bundle_id = get_bundle_id_from_plist_string(body)
         
-        print "{}".format(bundle_id)
+        print("{}".format(bundle_id))
         m = hashlib.md5()
         m.update(body)
         key = m.hexdigest()[8:16]
@@ -73,7 +73,7 @@ class MsgTransferHandler(tornado.web.RequestHandler):
             data = json.loads(self.request.body)
         except Exception as e:
             data = {}
-            print e
+            print(e)
 
         if not data:
             raise tornado.web.HTTPError(404)
@@ -103,5 +103,5 @@ if __name__ == "__main__":
     app = make_app(debug=bool(os.getenv('DEBUG')))
     server = tornado.httpserver.HTTPServer(app, xheaders=True)
     server.listen(options.port)
-    print 'Listening on port %d' % options.port
+    print('Listening on port %d' % options.port)
     ioloop.IOLoop.current().start()
