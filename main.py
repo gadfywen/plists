@@ -40,6 +40,8 @@ class PlistStoreHandler(tornado.web.RequestHandler):
     db = {}
     bundle_ids = collections.defaultdict(list)
 
+    print("plist")
+
     def post(self):
         body = self.request.body
         print("post get")
